@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const timeSlotsContainer = document.getElementById('time-slots-container');
     const bookingForm = document.getElementById('booking-form');
     const nameInput = document.getElementById('name');
+    const phoneInput = document.getElementById('phone');
     const messageContainer = document.getElementById('message-container');
 
     let selectedTime = null;
@@ -19,8 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error('Error al cargar los horarios.');
             }
-            const bookedAppointments = await response.json();
-            const bookedTimes = bookedAppointments.map(appt => appt.time);
+            const bookedTimes = await response.json();
 
             timeSlotsContainer.innerHTML = ''; // Limpiar contenedor
 
@@ -56,9 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
 
-        if (!name || !selectedTime) {
-            showMessage('Por favor, escribe tu nombre y selecciona un horario.', 'error');
+        if (!name || !phone || !selectedTime) {
+            showMessage('Por favor, completa todos los campos y selecciona un horario.', 'error');
             return;
         }
 
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name, time: selectedTime })
+                body: JSON.stringify({ name, phone, time: selectedTime })
             });
 
             if (response.status === 409) {
@@ -79,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newAppointment = await response.json();
                 showMessage(`¡Cita agendada con éxito para ${newAppointment.name} a las ${newAppointment.time}!`, 'success');
                 nameInput.value = '';
+                phoneInput.value = '';
                 selectedTime = null;
             }
 

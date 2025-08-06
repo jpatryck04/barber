@@ -3,7 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchAndRenderAppointments = async () => {
         try {
-            const response = await fetch('/api/appointments');
+            const response = await fetch('/api/admin/appointments');
+            if (response.status === 401) {
+                // Si no está autorizado, redirigir al login
+                window.location.href = '/login.html';
+                return;
+            }
             if (!response.ok) {
                 throw new Error('Error al cargar las citas.');
             }
@@ -22,14 +27,53 @@ document.addEventListener('DOMContentLoaded', () => {
             const ul = document.createElement('ul');
             appointments.forEach(appt => {
                 const li = document.createElement('li');
-                li.innerHTML = `<span class="time">${appt.time}</span> - ${appt.name}`;
+
+                const text = document.createElement('span');
+                text.innerHTML = `<span class="time">${appt.time}</span> - ${appt.name} (${appt.phone})`;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Eliminar';
+                deleteButton.classList.add('delete-btn');
+                deleteButton.dataset.time = appt.time;
+
+                li.appendChild(text);
+                li.appendChild(deleteButton);
                 ul.appendChild(li);
             });
 
             appointmentsListContainer.appendChild(ul);
 
+            // Añadir event listeners a los botones de eliminar
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', handleDelete);
+            });
+
         } catch (error) {
             appointmentsListContainer.innerHTML = `<p class="message error">${error.message}</p>`;
+        }
+    };
+
+    const handleDelete = async (event) => {
+        const time = event.target.dataset.time;
+
+        if (!confirm(`¿Estás seguro de que quieres eliminar la cita de las ${time}?`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/appointments/${time}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudo eliminar la cita.');
+            }
+
+            // Refrescar la lista de citas
+            fetchAndRenderAppointments();
+
+        } catch (error) {
+            alert(error.message);
         }
     };
 
