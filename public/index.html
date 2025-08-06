@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservar Cita - Barbería</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Reservar Cita</h1>
+        <p>Selecciona un horario disponible y escribe tu nombre para agendar tu cita.</p>
+
+        <form id="booking-form">
+            <div class="form-group">
+                <label for="name">Tu Nombre:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Horarios Disponibles:</label>
+                <div id="time-slots-container">
+                    <!-- Los horarios se cargarán aquí dinámicamente -->
+                    <p class="loading-message">Cargando horarios...</p>
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Agendar Cita</button>
+        </form>
+
+        <p id="message-container" class="message"></p>
+
+        <div class="admin-link">
+            <a href="/admin.html">Vista de Administrador</a>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
